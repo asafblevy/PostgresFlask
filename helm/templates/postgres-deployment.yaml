@@ -47,7 +47,7 @@ spec:
             valueFrom:
               secretKeyRef:
                name: {{ include "anzu.fullname" . }}-postgres-secret
-               key: POSTGRESQL_POSTGRES_PASSWORD
+               key: POSTGRESQL_PASSWORD
           volumeMounts:
             - name: postgresql-config
               mountPath: /bitnami/postgresql/conf
@@ -55,5 +55,8 @@ spec:
         - name: postgresql-config
           configMap:
             name: {{ include "anzu.fullname" . }}-postgres-config
+        - name: postgres-pv-claim
+          persistentVolumeClaim:
+            claimName: postgres-pv-claim
 
 

@@ -5,20 +5,23 @@ metadata:
   labels:
     {{- include "anzu.labels" . | nindent 4 }}
   annotations:
-    "helm.sh/hook": post-install,post-upgrade
+    "helm.sh/hook": post-install
 spec:
   template:
     spec:
       containers:
       - name: {{ include "anzu.fullname" . }}-psql
+        command: [ "sleep", "10m" ]
         image: jbergknoff/postgresql-client
         env:
-          - name: POSTGRESQL_USERNAME 
+          - name: PGHOST
+            value: anzu-postgres
+          - name: PGUSER 
             valueFrom:
               secretKeyRef:
                 name: {{ include "anzu.fullname" . }}-postgres-secret
                 key: POSTGRESQL_USERNAME 
-          - name: POSTGRESQL_PASSWORD 
+          - name: PGPASSWORD
             valueFrom:
               secretKeyRef:
                 name: {{ include "anzu.fullname" . }}-postgres-secret

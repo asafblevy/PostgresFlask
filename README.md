@@ -7,7 +7,7 @@ Run the command "docker ps" to make sure docker is installed correctly
 After installing the docker engine you would have to get a kubernetes environment to run the project on:
 For this project I chose minikube, the project should work on any other kubernetes environment you choose to use.
 To install minikube follow the instructions on this page:
-https://minikube.sigs.k8s.io/docs/start/
+https://minikube.sigs.k8s.io/docs/start/s
 Make sure you can run kubectl commands to make sure the next steps work:
 for example try running "kubectl get pods"
 
@@ -37,4 +37,5 @@ To deploy a new version of the application:
 3. Run "docker build -t anzu-app ."
 4. Go back into the helm directory
 5. Run the following command: "helm upgrade --install <name of your choice> ."
-6. The new environment should use the new image you just built
+6. The new environment should use the new image you just built.
+
