@@ -1,0 +1,28 @@
+postgres:
+  image:
+    repository: bitnami/postgresql
+    tag: "11"
+
+
+  service:
+    type: ClusterIP
+    port: 80
+
+  dbName: postgresdb
+
+app:
+  image:
+    repository: anzu-app
+    tag: latest
+  
+  ingress:
+    enabled: true
+    className: ""
+    annotations: 
+      kubernetes.io/ingress.class: nginx
+      
+    hosts:
+      - host: test.anzu
+        paths:
+          - path: /
+            pathType: ImplementationSpecific

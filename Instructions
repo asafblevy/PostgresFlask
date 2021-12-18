@@ -1,0 +1,20 @@
+### Kubernetes and helm chart installation instructions ###
+To get kubernetes to work you first have to install docker
+Follow the installation instructions for your OS type on the following site:
+https://docs.docker.com/engine/install/
+
+After installing the docker engine you would have to get a kubernetes environment to run the project on:
+For this project I chose minikube, the project should work on any other kubernetes environment you choose to use.
+To install minikube follow the instructions on this page:
+https://minikube.sigs.k8s.io/docs/start/
+Make sure you can run kubectl commands to make sure the next steps work:
+for example try running "kubectl get pods"
+
+Now you would have to install helm, the package manager which will get the whole project set up.
+Go to this page and follow the instructions:
+https://helm.sh/docs/intro/install/
+To make sure helm is installed run the command - helm version and make sure youre not getting any errors
+
+
+
+

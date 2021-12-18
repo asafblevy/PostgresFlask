@@ -1,0 +1,27 @@
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: {{ include "anzu.fullname" . }}-init-job
+  labels:
+    {{- include "anzu.labels" . | nindent 4 }}
+  annotations:
+    "helm.sh/hook": post-install,post-upgrade
+spec:
+  template:
+    spec:
+      containers:
+      - name: {{ include "anzu.fullname" . }}-psql
+        image: jbergknoff/postgresql-client
+        env:
+          - name: POSTGRESQL_USERNAME 
+            valueFrom:
+              secretKeyRef:
+                name: {{ include "anzu.fullname" . }}-postgres-secret
+                key: POSTGRESQL_USERNAME 
+          - name: POSTGRESQL_PASSWORD 
+            valueFrom:
+              secretKeyRef:
+                name: {{ include "anzu.fullname" . }}-postgres-secret
+                key: POSTGRESQL_PASSWORD
+      restartPolicy: Never
+  backoffLimit: 0

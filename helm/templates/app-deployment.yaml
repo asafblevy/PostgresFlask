@@ -1,0 +1,41 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ include "anzu.fullname" . }}-app
+  labels:
+    component: app
+    {{- include "anzu.labels" . | nindent 4 }}
+spec:
+  selector:
+    matchLabels:
+      component: app
+      {{- include "anzu.selectorLabels" . | nindent 6 }}
+  template:
+    metadata:
+      {{- with .Values.podAnnotations }}
+      annotations:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      labels:
+        component: app
+        {{- include "anzu.selectorLabels" . | nindent 8 }}
+    spec:
+      containers:
+        - name: {{ .Chart.Name }}
+          image: anzu-app
+          imagePullPolicy: Never
+          ports:
+          - name: app
+            containerPort: 5000
+            protocol: TCP
+          env:
+          - name: POSTGRESQL_PASSWORD 
+            valueFrom:
+              secretKeyRef:
+                name: {{ include "anzu.fullname" . }}-postgres-secret
+                key: POSTGRESQL_PASSWORD
+          - name: POSTGRESQL_USERNAME
+            valueFrom:
+              secretKeyRef:
+                name: {{ include "anzu.fullname" . }}-postgres-secret
+                key: POSTGRESQL_USERNAME

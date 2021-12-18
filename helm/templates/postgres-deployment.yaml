@@ -1,0 +1,59 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ include "anzu.fullname" . }}-postgres
+  labels:
+    component: db
+    {{- include "anzu.labels" . | nindent 4 }}
+spec:
+  selector:
+    matchLabels:
+      component: db
+      {{- include "anzu.selectorLabels" . | nindent 6 }}
+  template:
+    metadata:
+      {{- with .Values.podAnnotations }}
+      annotations:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      labels:
+        component: db
+        {{- include "anzu.selectorLabels" . | nindent 8 }}
+    spec:
+      containers:
+        - name: {{ .Chart.Name }}
+          image: "{{ .Values.postgres.image.repository }}:{{ .Values.postgres.image.tag | default .Chart.AppVersion }}"
+          ports:
+          - name: postgres
+            containerPort: 5432
+            protocol: TCP
+          env:
+          - name: PGPASSWORD 
+            valueFrom:
+              secretKeyRef:
+                name: {{ include "anzu.fullname" . }}-postgres-secret
+                key: POSTGRESQL_PASSWORD
+          - name: POSTGRESQL_PASSWORD 
+            valueFrom:
+              secretKeyRef:
+                name: {{ include "anzu.fullname" . }}-postgres-secret
+                key: POSTGRESQL_PASSWORD
+          - name: POSTGRES_PASSWORD 
+            valueFrom:
+              secretKeyRef:
+                name: {{ include "anzu.fullname" . }}-postgres-secret
+                key: POSTGRESQL_PASSWORD
+          - name: POSTGRESQL_POSTGRES_PASSWORD
+            valueFrom:
+              secretKeyRef:
+               name: {{ include "anzu.fullname" . }}-postgres-secret
+               key: POSTGRESQL_POSTGRES_PASSWORD
+          volumeMounts:
+            - name: postgresql-config
+              mountPath: /bitnami/postgresql/conf
+      volumes:
+        - name: postgresql-config
+          configMap:
+            name: {{ include "anzu.fullname" . }}-postgres-config
+
+
