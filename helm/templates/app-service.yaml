@@ -9,7 +9,7 @@ spec:
   type: {{ .Values.app.service.type }}
   ports:
     - name: app
-      port: 80
+      port: {{ .Values.app.service.port }}
       protocol: TCP
   selector:
     {{- include "anzu.selectorLabels" . | nindent 4 }}

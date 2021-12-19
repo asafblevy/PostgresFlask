@@ -1,11 +1,12 @@
 apiVersion: apps/v1
-kind: Deployment
+kind: StatefulSet
 metadata:
   name: {{ include "anzu.fullname" . }}-postgres
   labels:
     component: db
     {{- include "anzu.labels" . | nindent 4 }}
 spec:
+  serviceName: {{ include "anzu.fullname" . }}-postgres
   selector:
     matchLabels:
       component: db
@@ -22,41 +23,35 @@ spec:
     spec:
       containers:
         - name: {{ .Chart.Name }}
-          image: "{{ .Values.postgres.image.repository }}:{{ .Values.postgres.image.tag | default .Chart.AppVersion }}"
+          image: "{{ .Values.postgres.image.repository }}:{{ .Values.postgres.image.tag }}"
           ports:
           - name: postgres
             containerPort: 5432
             protocol: TCP
           env:
-          - name: PGPASSWORD 
-            valueFrom:
-              secretKeyRef:
-                name: {{ include "anzu.fullname" . }}-postgres-secret
-                key: POSTGRESQL_PASSWORD
           - name: POSTGRESQL_PASSWORD 
             valueFrom:
               secretKeyRef:
                 name: {{ include "anzu.fullname" . }}-postgres-secret
                 key: POSTGRESQL_PASSWORD
-          - name: POSTGRES_PASSWORD 
-            valueFrom:
-              secretKeyRef:
-                name: {{ include "anzu.fullname" . }}-postgres-secret
-                key: POSTGRESQL_PASSWORD
-          - name: POSTGRESQL_POSTGRES_PASSWORD
-            valueFrom:
-              secretKeyRef:
-               name: {{ include "anzu.fullname" . }}-postgres-secret
-               key: POSTGRESQL_PASSWORD
           volumeMounts:
             - name: postgresql-config
               mountPath: /bitnami/postgresql/conf
+            - name: postgresql-data
+              mountPath: /bitnami/postgresql
+          readinessProbe:
+            timeoutSeconds: 10
+            exec:
+              command: ['sh', '-c', 'pg_isready -U postgres']
       volumes:
         - name: postgresql-config
           configMap:
             name: {{ include "anzu.fullname" . }}-postgres-config
-        - name: postgres-pv-claim
-          persistentVolumeClaim:
-            claimName: postgres-pv-claim
-
-
+  volumeClaimTemplates:
+  - metadata:
+      name: postgresql-data
+    spec:
+      accessModes: ['ReadWriteOnce']
+      resources:
+        requests:
+          storage: 100M

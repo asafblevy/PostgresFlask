@@ -22,7 +22,7 @@ spec:
     spec:
       containers:
         - name: {{ .Chart.Name }}
-          image: anzu-app
+          image: "{{ .Values.app.image.repository }}:{{ .Values.app.image.tag | default .Chart.AppVersion }}"
           imagePullPolicy: Never
           ports:
           - name: app
@@ -30,7 +30,7 @@ spec:
             protocol: TCP
           env:
           - name: DATABASE_URI
-            value: postgresql://{{ include "anzu.fullname" . }}:5432
+            value: postgresql://{{ include "anzu.fullname" . }}-postgres:5432
           - name: POSTGRESQL_PASSWORD 
             valueFrom:
               secretKeyRef:

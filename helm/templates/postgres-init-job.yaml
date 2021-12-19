@@ -1,7 +1,7 @@
 apiVersion: batch/v1
 kind: Job
 metadata:
-  name: {{ include "anzu.fullname" . }}-init-job
+  name: {{ include "anzu.fullname" . }}-postgres-init-job
   labels:
     {{- include "anzu.labels" . | nindent 4 }}
   annotations:
@@ -11,11 +11,16 @@ spec:
     spec:
       containers:
       - name: {{ include "anzu.fullname" . }}-psql
-        command: [ "sleep", "10m" ]
+        command: 
+          - sh
+          - /scripts/script.sh
         image: jbergknoff/postgresql-client
+        volumeMounts:
+          - name: {{ include "anzu.fullname" . }}-init-config
+            mountPath: /scripts
         env:
           - name: PGHOST
-            value: anzu-postgres
+            value: {{ include "anzu.fullname" . }}-postgres
           - name: PGUSER 
             valueFrom:
               secretKeyRef:
@@ -26,5 +31,10 @@ spec:
               secretKeyRef:
                 name: {{ include "anzu.fullname" . }}-postgres-secret
                 key: POSTGRESQL_PASSWORD
+      volumes:
+        - name: {{ include "anzu.fullname" . }}-init-config
+          configMap:
+            name: {{ include "anzu.fullname" . }}-init-config
+            defaultMode: 0777
       restartPolicy: Never
-  backoffLimit: 0
+  backoffLimit: 10
