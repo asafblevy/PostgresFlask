@@ -30,7 +30,7 @@ spec:
             protocol: TCP
           env:
           - name: DATABASE_URI
-            value: postgresql://anzu-postgres:5432
+            value: postgresql://{{ include "anzu.fullname" . }}:5432
           - name: POSTGRESQL_PASSWORD 
             valueFrom:
               secretKeyRef:
