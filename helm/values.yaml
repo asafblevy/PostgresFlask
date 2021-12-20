@@ -27,6 +27,4 @@ app:
 persistence:
   existingClaim: postgres-pv-claim
 
-volumePermissions:
-  enabled: true
 

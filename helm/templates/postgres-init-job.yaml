@@ -16,7 +16,7 @@ spec:
           - /scripts/script.sh
         image: jbergknoff/postgresql-client
         volumeMounts:
-          - name: {{ include "anzu.fullname" . }}-init-config
+          - name: {{ include "anzu.fullname" . }}-postgres-init-config
             mountPath: /scripts
         env:
           - name: PGHOST
@@ -32,9 +32,9 @@ spec:
                 name: {{ include "anzu.fullname" . }}-postgres-secret
                 key: POSTGRESQL_PASSWORD
       volumes:
-        - name: {{ include "anzu.fullname" . }}-init-config
+        - name: {{ include "anzu.fullname" . }}-postgres-init-config
           configMap:
-            name: {{ include "anzu.fullname" . }}-init-config
+            name: {{ include "anzu.fullname" . }}-postgres-init-config
             defaultMode: 0777
       restartPolicy: Never
   backoffLimit: 10
