@@ -5,10 +5,16 @@ from flask import Flask
 
 app = Flask(__name__)
 
+dbUser = os.environ.get('POSTGRESQL_USERNAME')
+dbPassword = os.environ.get('POSTGRESQL_PASSWORD')
+dbHost = os.environ.get('POSTGRESQL_HOST')
+
 config = {
-    'DATABASE_URI': os.environ.get('DATABASE_URI', ''),
+    'DATABASE_URI': "postgresql://%s:%s@%s:5432" % (dbUser, dbPassword, dbHost),
     'HOSTNAME': os.environ['HOSTNAME'],
     'GREETING': os.environ.get('GREETING', 'Hello'),
+
+    
 }
 
 @app.route("/")
@@ -22,7 +28,7 @@ def configuration():
 
 @app.route("/version")
 def version():
-    return {"version": "0.1"}
+    return {"version": "0.2"}
 
 @app.route('/db')
 def db():
@@ -31,7 +37,7 @@ def db():
     engine = create_engine(config['DATABASE_URI'], echo=True)
     rows = []
     with engine.connect() as connection:
-        result = connection.execute("select id, name from client;")
+        result = connection.execute("select name, age from anzu;")
         rows = [dict(r.items()) for r in result]
     return json.dumps(rows)
 

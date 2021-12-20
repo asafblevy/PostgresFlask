@@ -29,8 +29,8 @@ spec:
             containerPort: 5000
             protocol: TCP
           env:
-          - name: DATABASE_URI
-            value: postgresql://{{ include "anzu.fullname" . }}-postgres:5432
+          - name: POSTGRESQL_HOST
+            value: {{ include "anzu.fullname" . }}-postgres
           - name: POSTGRESQL_PASSWORD 
             valueFrom:
               secretKeyRef:
